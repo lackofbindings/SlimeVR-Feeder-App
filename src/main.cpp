@@ -188,6 +188,15 @@ enum class TrackerState {
 struct TrackerInfo {
 	std::string name = "";
 	std::optional<std::string> serial = std::nullopt;
+
+	std::optional<std::string> trackingSystem = std::nullopt;
+	std::optional<std::string> manufacturer = std::nullopt;
+	std::optional<std::string> modelNumber = std::nullopt;
+	std::optional<std::string> renderModel = std::nullopt;
+	std::optional<std::string> deviceType = std::nullopt;
+	std::optional<std::string> controllerType = std::nullopt;
+	std::optional<std::string> inputProfilePath = std::nullopt;
+
 	SlimeVRPosition position = SlimeVRPosition::None;
 	messages::TrackerStatus_Status status = messages::TrackerStatus_Status_DISCONNECTED;
 
@@ -461,7 +470,25 @@ private:
 			bridge.sendMessage(message);
 
 			// log it.
-			fmt::print("Found device \"{}\" at {} ({}) with index {}\n", info->name, positionNames[(int)info->position], (int)info->position, index);
+			fmt::print("Found device \"{}\" at {} ({}) with index {}\n\
+			    serial: {}\n\
+			    trackingSystem: {}\n\
+			    manufacturer: {}\n\
+			    modelNumber: {}\n\
+			    renderModel: {}\n\
+			    deviceType: {}\n\
+			    controllerType: {}\n\
+			    inputProfilePath: {}\n\
+			", info->name, positionNames[(int)info->position], (int)info->position, index,
+				info->serial.value(),
+				info->trackingSystem.value(),
+				info->manufacturer.value(),
+				info->modelNumber.value(),
+				info->renderModel.value(),
+				info->deviceType.value(),
+				info->controllerType.value(),
+				info->inputProfilePath.value()
+			);
 		}
 	}
 
@@ -504,6 +531,14 @@ public:
 			}
 
 			info->serial = this->GetStringProp(index, ETrackedDeviceProperty::Prop_SerialNumber_String);
+
+			info->trackingSystem = this->GetStringProp(index, ETrackedDeviceProperty::Prop_TrackingSystemName_String);
+			info->manufacturer = this->GetStringProp(index, ETrackedDeviceProperty::Prop_ManufacturerName_String);
+			info->modelNumber = this->GetStringProp(index, ETrackedDeviceProperty::Prop_ModelNumber_String);
+			info->renderModel = this->GetStringProp(index, ETrackedDeviceProperty::Prop_RenderModelName_String);
+			info->deviceType = this->GetStringProp(index, ETrackedDeviceProperty::Prop_RegisteredDeviceType_String);
+			info->controllerType = this->GetStringProp(index, ETrackedDeviceProperty::Prop_ControllerType_String);
+			info->inputProfilePath = this->GetStringProp(index, ETrackedDeviceProperty::Prop_InputProfilePath_String);
 
 			current_trackers.insert(index);
 
